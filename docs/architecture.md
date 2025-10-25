@@ -1,7 +1,3 @@
-Of course. Here is the complete Fullstack Architecture Document for the "Grape" project.
-
----
-
 ### **Grape Fullstack Architecture Document**
 
 ### **Introduction**
