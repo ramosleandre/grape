@@ -82,7 +82,7 @@ graph TD
         A[Start: Project Dashboard] --> B{Select 'Create from PDF' or 'Create from URL'};
         B --> C[System: Show input dialog for file/URL];
         C --> D{User provides source};
-        D --> E[System: Show multi-step progress feedback<br/>(e.g., 'Uploading...', 'Analyzing document...')];
+        D --> E["System: Show multi-step progress feedback<br/>(e.g., 'Uploading...', 'Analyzing document...')"];
         E --> F{API: Send source to LLM for analysis};
         F --> G{API: Process LLM response & build graph};
         G --> H{API: Store new graph in database};

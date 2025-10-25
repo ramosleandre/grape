@@ -12,7 +12,7 @@ This is a greenfield project being built from scratch. No existing starter templ
 
 | Date | Version | Description | Author |
 | :--- | :--- | :--- | :--- |
-|      | 1.0     | Initial Draft | Winston, Architect |
+|      | 1.0     | Initial Draft | Youssef Mehili |
 
 ### **High Level Architecture**
 
@@ -422,13 +422,13 @@ The Grape application is composed of several key logical components with distinc
 ```mermaid
 graph TD
     subgraph User's Device
-        A[Frontend Application<br/>(Next.js on Browser)]
+        A["Frontend Application<br/>(Next.js on Browser)"]
     end
 
     subgraph GCP
-        B[Backend API Service<br/>(FastAPI on Cloud Run)]
-        C[Graph Database<br/>(GraphDB)]
-        D[AI Models<br/>(Vertex AI)]
+        B["Backend API Service<br/>(FastAPI on Cloud Run)"]
+        C["Graph Database<br/>(GraphDB)"]
+        D["AI Models<br/>(Vertex AI)"]
     end
 
     A -- REST API Calls --> B
