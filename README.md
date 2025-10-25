@@ -4,9 +4,7 @@
 
 ---
 
-![Project Logo or Screenshot](./docs/grape_cover.jpg)
-<!-- Place your image here -->
-
+![alt text](docs/grape_cover.png)
 ## Overview
 
 **Grape** is an AI-powered reasoning agent built around a **central RDF knowledge graph**.  
