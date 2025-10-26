@@ -13,7 +13,7 @@ export interface UseGraphDataReturn {
   loading: boolean;
   error: string | null;
   refetch: (graphId?: string) => Promise<void>;
-  loadWikidataEntity: (entityId: string) => Promise<void>;
+  loadWikidataEntity: (entityId: string, depth?: number) => Promise<void>;
   clearError: () => void;
 }
 
@@ -51,11 +51,11 @@ export function useGraphData(initialGraphId?: string): UseGraphDataReturn {
     [initialGraphId]
   );
 
-  const loadWikidataEntity = useCallback(async (entityId: string) => {
+  const loadWikidataEntity = useCallback(async (entityId: string, depth: number = 1) => {
     try {
       setLoading(true);
       setError(null);
-      const graphData = await fetchWikidataGraph(entityId);
+      const graphData = await fetchWikidataGraph(entityId, depth);
       setData({
         nodes: graphData.nodes,
         links: graphData.links,

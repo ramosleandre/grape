@@ -47,16 +47,17 @@ export async function fetchGraphData(graphId: string): Promise<GraphData> {
  * Fetch Wikidata graph for a specific entity
  *
  * @param entityId - Wikidata entity ID (e.g., "Q90" for Paris)
+ * @param depth - Depth of traversal (1-3, default: 1)
  * @returns Promise resolving to graph data with nodes and links
  */
-export async function fetchWikidataGraph(entityId: string): Promise<GraphData> {
+export async function fetchWikidataGraph(entityId: string, depth: number = 1): Promise<GraphData> {
   try {
     const response = await fetch(`${API_BASE_URL}/api/wikidata/visualize`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ entity_id: entityId }),
+      body: JSON.stringify({ entity_id: entityId, depth }),
     });
 
     if (!response.ok) {
@@ -83,16 +84,17 @@ export async function fetchWikidataGraph(entityId: string): Promise<GraphData> {
  * Fetch Wikidata graph from a Wikidata URL
  *
  * @param wikidataUrl - Full Wikidata URL (e.g., "https://www.wikidata.org/wiki/Q90")
+ * @param depth - Depth of traversal (1-3, default: 1)
  * @returns Promise resolving to graph data with nodes and links
  */
-export async function fetchWikidataGraphFromUrl(wikidataUrl: string): Promise<GraphData> {
+export async function fetchWikidataGraphFromUrl(wikidataUrl: string, depth: number = 1): Promise<GraphData> {
   try {
     const response = await fetch(`${API_BASE_URL}/api/wikidata/visualize`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ wikidata_url: wikidataUrl }),
+      body: JSON.stringify({ wikidata_url: wikidataUrl, depth }),
     });
 
     if (!response.ok) {

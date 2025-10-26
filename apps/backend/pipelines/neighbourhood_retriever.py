@@ -67,6 +67,84 @@ class NeighbourhoodRetriever:
             "total_neighbors": len(unique_nodes),
         }
 
+    async def retrieve_multi_hop(
+        self,
+        concept_uri: str,
+        max_depth: int = 2,
+        max_neighbors_per_node: int = 20,
+        include_incoming: bool = True,
+        include_outgoing: bool = True,
+    ) -> Dict[str, Any]:
+        """
+        Get multi-hop neighbors of a concept (recursive traversal).
+
+        Args:
+            concept_uri: URI of the starting concept
+            max_depth: Maximum depth to traverse (1 = direct neighbors only)
+            max_neighbors_per_node: Max neighbors to retrieve per node
+            include_incoming: Include incoming edges
+            include_outgoing: Include outgoing edges
+
+        Returns:
+            Dict with nodes and links from all depths
+        """
+        all_nodes = {}
+        all_links = []
+        visited = set()
+        
+        # Track nodes to explore at each level
+        current_level = {concept_uri}
+        
+        for depth in range(max_depth):
+            if not current_level:
+                break
+                
+            next_level = set()
+            logger.info(f"Exploring depth {depth + 1} with {len(current_level)} nodes")
+            
+            for node_uri in current_level:
+                if node_uri in visited:
+                    continue
+                    
+                visited.add(node_uri)
+                
+                # Get 1-hop neighborhood for this node
+                neighborhood = await self.retrieve(
+                    concept_uri=node_uri,
+                    max_neighbors=max_neighbors_per_node,
+                    include_incoming=include_incoming,
+                    include_outgoing=include_outgoing,
+                )
+                
+                # Add nodes and links
+                for node in neighborhood["nodes"]:
+                    node_id = node["id"]
+                    if node_id not in all_nodes:
+                        all_nodes[node_id] = node
+                        # Add to next level if we haven't reached max depth
+                        if depth + 1 < max_depth:
+                            next_level.add(node_id)
+                
+                for link in neighborhood["links"]:
+                    # Avoid duplicate links
+                    link_key = f"{link['source']}-{link['relation']}-{link['target']}"
+                    if not any(
+                        f"{l['source']}-{l['relation']}-{l['target']}" == link_key 
+                        for l in all_links
+                    ):
+                        all_links.append(link)
+            
+            current_level = next_level
+            logger.info(f"Found {len(all_nodes)} total nodes, queuing {len(next_level)} for next level")
+        
+        return {
+            "center_node": concept_uri,
+            "nodes": list(all_nodes.values()),
+            "links": all_links,
+            "total_neighbors": len(all_nodes),
+            "depth": max_depth,
+        }
+
     async def _fetch_wikidata_labels(self, nodes_dict: Dict[str, Dict], links: List[Dict]) -> None:
         """Fetch labels for Wikidata entities and properties in batch."""
         try:

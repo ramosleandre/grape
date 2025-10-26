@@ -23,6 +23,7 @@ class WikidataRequest(BaseModel):
 
     wikidata_url: Optional[str] = None
     entity_id: Optional[str] = None
+    depth: Optional[int] = 1  # Default to 1-hop neighborhood
 
 
 @router.post("/wikidata/visualize", response_model=Dict[str, Any])
@@ -67,13 +68,23 @@ async def visualize_wikidata_entity(request: WikidataRequest):
         # Construct entity URI
         entity_uri = f"http://www.wikidata.org/entity/{entity_id}"
 
-        # Use NeighbourhoodRetriever to get 1-hop neighborhood
+        # Validate and constrain depth
+        depth = request.depth or 1
+        if depth < 1:
+            depth = 1
+        elif depth > 3:
+            # Limit depth to 3 to prevent excessive queries
+            depth = 3
+            logger.warning(f"Depth limited to 3 (requested: {request.depth})")
+
+        # Use NeighbourhoodRetriever to get multi-hop neighborhood
         retriever = NeighbourhoodRetriever(endpoint=WIKIDATA_ENDPOINT)
 
-        # Get neighborhood data (limit to 50 neighbors for performance)
-        neighborhood = await retriever.retrieve(
+        # Get neighborhood data with depth
+        neighborhood = await retriever.retrieve_multi_hop(
             concept_uri=entity_uri,
-            max_neighbors=50,
+            max_depth=depth,
+            max_neighbors_per_node=50 if depth == 1 else 20,  # Reduce neighbors for deeper queries
             include_incoming=True,
             include_outgoing=True,
         )
@@ -121,6 +132,8 @@ async def visualize_wikidata_entity(request: WikidataRequest):
             "metadata": {
                 "entity_id": entity_id,
                 "entity_uri": entity_uri,
+                "depth": depth,
+                "total_nodes": len(nodes),
                 "total_neighbors": neighborhood.get("total_neighbors", 0),
             },
         }

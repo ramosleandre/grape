@@ -9,11 +9,12 @@
 import { useState } from 'react';
 
 interface WikidataInputProps {
-  onLoadEntity: (entityIdOrUrl: string) => Promise<void>;
+  onLoadEntity: (entityIdOrUrl: string, depth?: number) => Promise<void>;
 }
 
 export default function WikidataInput({ onLoadEntity }: WikidataInputProps) {
   const [input, setInput] = useState('');
+  const [depth, setDepth] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -37,7 +38,7 @@ export default function WikidataInput({ onLoadEntity }: WikidataInputProps) {
         }
       }
 
-      await onLoadEntity(entityId);
+      await onLoadEntity(entityId, depth);
     } catch (err) {
       console.error('Failed to load Wikidata entity:', err);
       setError(err instanceof Error ? err.message : 'Failed to load Wikidata entity');
@@ -65,6 +66,22 @@ export default function WikidataInput({ onLoadEntity }: WikidataInputProps) {
             className="w-full px-4 py-2 border border-[#E5E7EB] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E57373] focus:border-transparent"
             disabled={loading}
           />
+        </div>
+        <div className="flex items-center gap-2">
+          <label htmlFor="depth-select" className="text-sm text-[#6B7280] whitespace-nowrap">
+            Depth:
+          </label>
+          <select
+            id="depth-select"
+            value={depth}
+            onChange={(e) => setDepth(Number(e.target.value))}
+            className="px-3 py-2 border border-[#E5E7EB] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E57373] focus:border-transparent bg-white"
+            disabled={loading}
+          >
+            <option value={1}>1</option>
+            <option value={2}>2</option>
+            <option value={3}>3</option>
+          </select>
         </div>
         <button
           onClick={handleVisualize}
@@ -98,6 +115,10 @@ export default function WikidataInput({ onLoadEntity }: WikidataInputProps) {
 
       <div className="mt-2 text-xs text-[#6B7280]">
         <p>Try: Q90 (Paris), Q5 (Human), Q2 (Earth), or paste a full Wikidata URL</p>
+        <p className="mt-1">
+          <span className="font-medium">Depth:</span> 1 = direct connections only, 2 = connections
+          of connections, 3 = third-level connections
+        </p>
       </div>
     </div>
   );
