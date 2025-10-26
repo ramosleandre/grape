@@ -47,6 +47,10 @@ class ReasoningPath(BaseModel):
         default=None,
         description="Human-readable explanation of each reasoning step",
     )
+    metadata: Optional[Dict[str, Any]] = Field(
+        default_factory=dict,
+        description="Additional metadata about the reasoning process",
+    )
 
 
 class AgentResponse(BaseModel):

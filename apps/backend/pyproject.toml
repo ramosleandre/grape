@@ -78,7 +78,9 @@ build-backend = "hatchling.build"
 packages = ["core", "api", "models", "adapters", "pipelines", "scenarios"]
 
 [tool.uv]
-dev-dependencies = []
+dev-dependencies = [
+    "pytest-asyncio>=1.2.0",
+]
 
 [tool.black]
 line-length = 100
@@ -91,3 +93,5 @@ target-version = "py312"
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 asyncio_mode = "auto"
+pythonpath = ["."]
+addopts = "-v --tb=short"

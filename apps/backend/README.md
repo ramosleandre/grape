@@ -343,10 +343,17 @@ apps/backend/
 │
 ├── gen2kgbot/                  # Integrated gen2kgbot library (submodule)
 │
-├── tests/                       # Test suite
-│   ├── test_pipelines.py
-│   ├── test_scenarios.py
-│   └── test_api.py
+├── tests/                       # Test suite (30 tests, 27 passing)
+│   ├── README.md               # Test documentation & verification methods
+│   ├── test_sparql_executor.py
+│   ├── test_concept_finder.py
+│   ├── test_neighbourhood_retriever.py
+│   ├── test_multi_hop_explorer.py
+│   ├── test_ontology_builder.py
+│   ├── test_example_retriever.py
+│   ├── test_federated_connector.py
+│   ├── test_validation_engine.py
+│   └── test_reasoning_narrator.py
 │
 ├── main.py                      # Application entry point
 ├── pyproject.toml              # Project metadata & dependencies (uv)
@@ -426,21 +433,24 @@ async def execute_scenario_10(question: str) -> AgentResponse:
 
 ### Running Tests
 
+**Quick Start:**
 ```bash
-# Install dev dependencies
-uv pip install pytest pytest-asyncio httpx black ruff
+# Run all tests (27/30 passing)
+uv run pytest tests/ -v
 
-# Run all tests
-pytest
+# Run specific pipeline test
+uv run pytest tests/test_sparql_executor.py -v
+```
 
-# Run with coverage
-pytest --cov=. --cov-report=html
+**Detailed information**: See [tests/README.md](tests/README.md) for:
+- Complete test coverage (30 tests across 9 pipelines)
+- Verification methods for each pipeline
+- Expected failures explanation (3 tests)
+- Troubleshooting guide
 
-# Run specific test file
-pytest tests/test_pipelines.py -v
-
-# Run and watch for changes
-pytest-watch
+**Test with coverage:**
+```bash
+uv run pytest --cov=pipelines --cov-report=html
 ```
 
 ### Code Quality
@@ -617,6 +627,8 @@ We welcome contributions! Please see [NEXT_STEPS.md](NEXT_STEPS.md) for implemen
 
 ## Documentation
 
+- **[tests/README.md](tests/README.md)** - Complete test documentation with verification methods
+- **[pipelines/PIPELINES_README.md](pipelines/PIPELINES_README.md)** - Pipeline integration with gen2kgbot
 - **[SETUP_SUMMARY.md](SETUP_SUMMARY.md)** - Detailed setup walkthrough
 - **[NEXT_STEPS.md](NEXT_STEPS.md)** - Implementation guide for pipelines and scenarios
 - **API Docs** - http://localhost:8000/docs (when server is running)
