@@ -55,6 +55,65 @@ Unlike traditional LLM-based assistants, **Grape treats the knowledge graph as i
 
 ##  Setup
 
+## Development Setup
+
+### Prerequisites
+
+- Docker and Docker Compose
+- Make (optional, but recommended)
+
+### Quick Start with Docker
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/your-repo/grape.git
+   cd grape
+   ```
+
+2. Configure environment variables:
+   ```bash
+   cp apps/backend/.env.example apps/backend/.env
+   # Edit apps/backend/.env with your credentials
+   ```
+
+3. Start all services:
+   ```bash
+   make up
+   # or
+   docker-compose up -d
+   ```
+
+4. Access the applications:
+   - Frontend: http://localhost:3000
+   - Backend API: http://localhost:8000
+   - API Docs: http://localhost:8000/docs
+
+### Development Commands
+
+```bash
+make help        # Show all available commands
+make up          # Start services
+make down        # Stop services
+make logs        # View logs
+make test-web    # Run frontend tests
+make test-api    # Run backend tests
+make lint-web    # Lint frontend
+make lint-api    # Lint backend
+```
+
+### Project Structure
+
+```
+grape/
+├── apps/
+│   ├── web/              # Next.js frontend
+│   └── backend/          # FastAPI backend
+├── docker-compose.yml    # Service orchestration
+└── Makefile             # Development commands
+```
+
+## Legacy Setup
+
 ```bash
 git clone https://github.com/<your-repo>/grape.git
 cd grape

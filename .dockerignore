@@ -1,0 +1,39 @@
+# Git
+.git
+.gitignore
+.gitmodules
+
+# Dependencies
+**/node_modules
+**/.venv
+**/venv
+
+# Build artifacts
+**/.next
+**/dist
+**/build
+**/__pycache__
+**/*.pyc
+
+# Environment
+**/.env
+**/.env.local
+
+# IDE
+.vscode
+.idea
+**/.DS_Store
+
+# Documentation
+*.md
+!README.md
+
+# Tests
+**/tests
+**/*.test.ts
+**/*.test.tsx
+**/*.spec.ts
+
+# Docker
+**/Dockerfile*
+**/docker-compose*.yml

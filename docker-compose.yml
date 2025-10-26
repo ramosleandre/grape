@@ -1,0 +1,54 @@
+services:
+  web:
+    build:
+      context: ./apps/web
+      dockerfile: Dockerfile
+      target: deps  # Use deps stage for development
+    container_name: grape-web
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./apps/web:/app
+      - /app/node_modules
+      - /app/.next
+    environment:
+      - NODE_ENV=development
+      - NEXT_PUBLIC_API_URL=http://api:8000
+    command: npm run dev
+    networks:
+      - grape-network
+    depends_on:
+      - api
+
+  api:
+    build:
+      context: ./apps/backend
+      dockerfile: Dockerfile
+    container_name: grape-api
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./apps/backend:/app
+      - /app/.venv
+    environment:
+      - ENVIRONMENT=development
+      - LOG_LEVEL=INFO
+    env_file:
+      - ./apps/backend/.env
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    networks:
+      - grape-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+networks:
+  grape-network:
+    driver: bridge
+
+volumes:
+  node_modules:
+  next_build:

@@ -441,7 +441,7 @@ graph TD
 ```plaintext
 grape-monorepo/
 ├── apps/
-│   ├── api/                  # FastAPI Backend Application
+│   ├── backend/                  # FastAPI Backend Application
 │   │   ├── app/
 │   │   │   ├── main.py
 │   │   │   ├── api/
