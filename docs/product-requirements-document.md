@@ -106,7 +106,7 @@ The project will adhere to a full testing pyramid strategy, including:
 *   **Hosting:** All project components will be deployed and hosted on the **Google Cloud Platform**. The Next.js frontend can be hosted on **Firebase Hosting** or **Vercel** (which integrates well with GCP), with backend services on **Cloud Run** (ideal for FastAPI).
 *   **Frontend:** The frontend will be built with the **Next.js** framework (a React framework). The graph visualization will be implemented using the **react-force-graph** library.
 *   **Backend:** The backend API will be built with **Python** using the **FastAPI** framework.
-*   **Database:** The core of the system will be a **Graph Database** that supports the RDF model and SPARQL queries. For the hackathon, using a managed service from the **Google Cloud Marketplace**, such as **Neo4j Aura**, is the recommended approach.
+*   **Database:** The core of the system will be a **RDF Triplestore** that supports the RDF/OWL model and SPARQL queries. **GraphDB** is the recommended choice - an enterprise-grade RDF database that can be deployed on Google Cloud (via Compute Engine or Kubernetes). Alternative options include Apache Jena Fuseki, OpenLink Virtuoso, or using public SPARQL endpoints for testing (e.g., DBpedia, Wikidata).
 *   **LLM Integration:** The architecture will primarily leverage Google's **Vertex AI Platform** and its **Gemini family of models** for the LLM-driven tasks. The system should still be designed to treat the specific model endpoint as a configurable component to allow for flexibility.
 
 ### **Epic List**
@@ -156,7 +156,7 @@ The project will adhere to a full testing pyramid strategy, including:
 **Acceptance Criteria:**
 1.  A FastAPI endpoint `/import/rdf` is created that accepts a file upload.
 2.  The endpoint validates that the uploaded file is a valid RDF file.
-3.  Upon successful validation, the graph data is saved to a new instance in the graph database (e.g., Neo4j Aura).
+3.  Upon successful validation, the graph data is loaded into the RDF triplestore (e.g., GraphDB) using SPARQL INSERT queries or the database's native import API.
 4.  The API returns a success response with a unique ID for the newly imported graph.
 5.  The API returns a meaningful error response if the file is invalid or the import fails.
 
@@ -356,10 +356,10 @@ The project will adhere to a full testing pyramid strategy, including:
 **so that** I can create, update, and replicate the production environment reliably and consistently.
 
 **Acceptance Criteria:**
-1.  IaC scripts are created to provision all required GCP resources (e.g., Cloud Run services, Firebase Hosting, Neo4j Aura instance, IAM roles).
+1.  IaC scripts are created to provision all required GCP resources (e.g., Cloud Run services, Firebase Hosting, GraphDB instance on Compute Engine or GKE, IAM roles).
 2.  The infrastructure is configured with separate environments for development, staging, and production.
 3.  The IaC scripts include configurations for networking (VPC, firewall rules) and security (service account permissions).
-4.  Secrets and sensitive configuration (API keys, database credentials) are managed securely (e.g., using Google Secret Manager) and are not hardcoded.
+4.  Secrets and sensitive configuration (API keys, database credentials, SPARQL endpoint URLs) are managed securely (e.g., using Google Secret Manager) and are not hardcoded.
 
 #### **Story 5.2: CI/CD Pipeline for Automated Deployments**
 

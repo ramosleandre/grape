@@ -57,7 +57,7 @@ gcloud secrets versions add projects/PROJECT_ID/secrets/graphdb_password --data-
 ```
 
 Décisions/limitations
-- Neo4j Aura ou autres services GraphDB managés peuvent ne pas avoir de provider Terraform officiel couvrant tout. Le fichier `database.tf` fournit un placeholder et instructions pour intégrer Neo4j Aura manuellement en stockant les credentials dans Secret Manager.
+- GraphDB (RDF Triplestore) doit être déployé manuellement sur Compute Engine, GKE, ou via un service managé tiers. Le fichier `database.tf` fournit un placeholder et instructions pour déployer GraphDB et stocker les credentials (SPARQL endpoint URL) dans Secret Manager. Pour les tests, des endpoints SPARQL publics (DBpedia, Wikidata) peuvent être utilisés.
 - Firebase Hosting peut nécessiter quelques étapes manuelles (associer site, config CLI) — des instructions sont fournies plus bas.
 
 Checklist de validation post-apply
@@ -71,5 +71,5 @@ Si vous avez besoin d'ajustements (par ex. backend GCS centralisé automatisé),
 ---
 ## Étapes manuelles restantes (résumé)
 - Ajouter les versions (valeurs) des secrets via `gcloud secrets versions add` ou via votre secret management sécurisé.
-- Si vous utilisez Neo4j Aura ou un service managé privé, suivez les instructions de `database.tf` pour le peering ou la configuration réseau; la création manuelle du service peut être nécessaire.
+- Déployer GraphDB (RDF Triplestore) sur Compute Engine, GKE, ou utiliser un endpoint SPARQL public pour les tests. Suivez les instructions de `database.tf` pour les options de déploiement et la configuration réseau.
 - Pour Firebase Hosting, finaliser la configuration via `firebase` CLI si nécessaire (documenté ci-dessous).

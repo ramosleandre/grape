@@ -26,7 +26,7 @@ The Grape application will be a modern full-stack web application built within a
 *   **Key Services:**
     *   **Cloud Run:** To host the containerized FastAPI backend services, providing a scalable, serverless environment.
     *   **Firebase Hosting:** To deploy and host the static and server-rendered assets of the Next.js frontend globally.
-    *   **GraphDB on GCP Marketplace:** A managed graph database service to handle all knowledge graph storage, RDF compliance, and SPARQL queries.
+    *   **GraphDB (RDF Triplestore):** An enterprise-grade RDF graph database to handle all knowledge graph storage, RDF/OWL compliance, and SPARQL queries. Can be deployed on Compute Engine or GKE, or use public SPARQL endpoints for testing (e.g., DBpedia, Wikidata).
     *   **Vertex AI (Gemini Models):** For all LLM-driven tasks, including graph generation, natural language command processing, and question-to-SPARQL conversion.
     *   **Google Secret Manager:** For securely storing all API keys, database credentials, and other sensitive information.
     *   **Artifact Registry:** To store the container images for our FastAPI services.
