@@ -53,6 +53,15 @@ class GraphGenerateRequest(BaseModel):
     # Note: PDF files will be handled via multipart/form-data in the endpoint
 
 
+class GraphImportRequest(BaseModel):
+    """Request model for importing an RDF file (metadata only, file via multipart)."""
+
+    name: Optional[str] = Field(
+        default=None,
+        description="Optional name for the imported graph. If not provided, will be derived from filename.",
+    )
+
+
 class NodeCreateRequest(BaseModel):
     """Request model for creating a new node in the graph."""
 

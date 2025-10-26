@@ -97,19 +97,29 @@ class KnowledgeGraph(BaseModel):
 
     id: str = Field(..., description="Unique identifier of the knowledge graph")
     name: str = Field(..., description="Human-readable name of the graph")
-    created_at: datetime = Field(..., description="Creation timestamp")
-    updated_at: datetime = Field(..., description="Last update timestamp")
-    node_count: Optional[int] = Field(None, description="Total number of nodes")
-    link_count: Optional[int] = Field(None, description="Total number of links")
+    created_at: datetime = Field(..., description="Creation timestamp", alias="createdAt")
+    updated_at: datetime = Field(..., description="Last update timestamp", alias="updatedAt")
+    triple_count: Optional[int] = Field(None, description="Number of triples in the graph", alias="tripleCount")
+    description: Optional[str] = Field(None, description="Optional description of the graph")
+
+    model_config = {"populate_by_name": True}
 
 
 class GraphImportResponse(BaseModel):
-    """Response after importing or generating a graph."""
+    """Response after successfully importing a graph."""
+
+    graph_id: str = Field(..., description="ID of the newly imported graph")
+    name: str = Field(..., description="Name of the imported graph")
+    triple_count: int = Field(..., description="Number of triples imported")
+    message: str = Field(default="Graph imported successfully")
+
+
+class GraphGenerationResponse(BaseModel):
+    """Response after generating a graph from a document."""
 
     graph_id: str = Field(..., description="ID of the newly created graph")
+    name: str = Field(..., description="Name of the generated graph")
     message: str = Field(..., description="Success message")
-    node_count: int = Field(..., description="Number of nodes imported")
-    link_count: int = Field(..., description="Number of links imported")
 
 
 class GraphEditResponse(BaseModel):

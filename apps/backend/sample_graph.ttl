@@ -1,0 +1,33 @@
+@prefix ex: <http://example.org/medical/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# Sample medical research data for testing
+
+ex:Disease_Alzheimers a ex:Disease ;
+    rdfs:label "Alzheimer's Disease" ;
+    ex:affectsSystem ex:NervousSystem ;
+    ex:hasSymptom ex:Symptom_MemoryLoss ,
+                  ex:Symptom_Confusion .
+
+ex:Drug_Donepezil a ex:Drug ;
+    rdfs:label "Donepezil" ;
+    ex:treats ex:Disease_Alzheimers ;
+    ex:dosage "5-10 mg daily"^^xsd:string ;
+    ex:approvalYear "1996"^^xsd:gYear .
+
+ex:Gene_APOE4 a ex:Gene ;
+    rdfs:label "APOE ε4" ;
+    ex:associatedWith ex:Disease_Alzheimers ;
+    ex:riskFactor "3x increased risk"^^xsd:string .
+
+ex:Symptom_MemoryLoss a ex:Symptom ;
+    rdfs:label "Memory Loss" ;
+    ex:severity "Progressive"^^xsd:string .
+
+ex:Symptom_Confusion a ex:Symptom ;
+    rdfs:label "Confusion" ;
+    ex:severity "Moderate to Severe"^^xsd:string .
+
+ex:NervousSystem a ex:BiologicalSystem ;
+    rdfs:label "Nervous System" .

@@ -6,6 +6,7 @@ from .requests import (
     QueryRequest,
     GraphEditCommandRequest,
     GraphGenerateRequest,
+    GraphImportRequest,
     NodeCreateRequest,
     NodeUpdateRequest,
     LinkCreateRequest,
@@ -19,9 +20,8 @@ from .responses import (
     GraphData,
     KnowledgeGraph,
     GraphImportResponse,
-    GraphEditResponse,
+    GraphGenerationResponse,
     HealthResponse,
-    ErrorResponse,
 )
 
 __all__ = [
@@ -29,6 +29,7 @@ __all__ = [
     "QueryRequest",
     "GraphEditCommandRequest",
     "GraphGenerateRequest",
+    "GraphImportRequest",
     "NodeCreateRequest",
     "NodeUpdateRequest",
     "LinkCreateRequest",
@@ -41,7 +42,6 @@ __all__ = [
     "GraphData",
     "KnowledgeGraph",
     "GraphImportResponse",
-    "GraphEditResponse",
+    "GraphGenerationResponse",
     "HealthResponse",
-    "ErrorResponse",
 ]

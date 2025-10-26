@@ -151,14 +151,23 @@ The project will adhere to a full testing pyramid strategy, including:
 
 **As a** developer,
 **I want** a FastAPI endpoint that can accept and store a user-uploaded Knowledge Graph in RDF format,
-**so that** data can be brought into the system for later processing.
+**so that** users can import their existing knowledge graphs into Grape for querying and visualization.
 
 **Acceptance Criteria:**
-1.  A FastAPI endpoint `/import/rdf` is created that accepts a file upload.
-2.  The endpoint validates that the uploaded file is a valid RDF file.
-3.  Upon successful validation, the graph data is loaded into the RDF triplestore (e.g., GraphDB) using SPARQL INSERT queries or the database's native import API.
-4.  The API returns a success response with a unique ID for the newly imported graph.
-5.  The API returns a meaningful error response if the file is invalid or the import fails.
+1.  A FastAPI endpoint `POST /api/graphs/import` is created that accepts a multipart file upload with an optional `name` field.
+2.  The endpoint accepts RDF files in common formats: Turtle (.ttl), RDF/XML (.rdf), N-Triples (.nt), or JSON-LD (.jsonld).
+3.  The backend parses the uploaded file using RDFLib to extract RDF triples.
+4.  A unique graph ID (UUID) is generated for the new knowledge graph.
+5.  Graph metadata (id, name, creation timestamp) is stored as RDF triples in a metadata named graph (`<http://grape.app/metadata>`).
+6.  All triples from the uploaded file are inserted into GraphDB using a SPARQL INSERT DATA query, stored in a named graph with URI `<http://grape.app/graphs/{graph_id}>`.
+7.  The API returns a success response with the graph ID and name: `{"graphId": "abc-123", "name": "My Graph"}`.
+8.  If the file cannot be parsed or the database insert fails, the API returns an appropriate error response with details.
+
+**Technical Notes:**
+- Use RDFLib's `Graph.parse()` method for file parsing - it handles validation automatically.
+- Named graphs isolate each user's knowledge graph, allowing multiple graphs in one GraphDB instance.
+- The SPARQL INSERT should be executed against the configured `kg_sparql_endpoint_url` with authentication.
+- For MVP, if the name is not provided, generate one from the filename (e.g., "my_data.ttl" → "my_data").
 
 #### **Story 1.4: Connect UI to RDF Import Endpoint**
 
@@ -168,11 +177,12 @@ The project will adhere to a full testing pyramid strategy, including:
 
 **Acceptance Criteria:**
 1.  The UI shell contains a clearly labeled "Import RDF" button.
-2.  Clicking the button opens a system file selector.
-3.  Selecting a valid RDF file and confirming triggers a call to the `/import/rdf` API endpoint.
-4.  The UI displays a loading indicator while the file is being uploaded and processed.
-5.  The UI displays a clear success message upon a successful API response.
-6.  The UI displays a helpful error message if the API returns an error.
+2.  Clicking the button opens a system file selector that accepts .ttl, .rdf, .nt, and .jsonld files.
+3.  The user is prompted to optionally provide a name for the graph (with a default based on the filename).
+4.  Selecting a valid RDF file and confirming triggers a call to the `POST /api/graphs/import` API endpoint with the file and optional name.
+5.  The UI displays a loading indicator while the file is being uploaded and processed.
+6.  Upon successful API response, the UI displays a success message with the graph name and navigates to the graph workspace view.
+7.  If the API returns an error, the UI displays a helpful error message with details about what went wrong.
 
 ### **Epic 2: Interactive Graph Visualization & Manual Editing**
 
@@ -186,7 +196,7 @@ The project will adhere to a full testing pyramid strategy, including:
 
 **Acceptance Criteria:**
 1.  After a graph is imported, the main panel of the workspace displays a graph visualization using the `react-force-graph` library.
-2.  A new FastAPI endpoint `/graph/{graph_id}` is created to fetch the data of a specific graph from the database.
+2.  A new FastAPI endpoint `GET /api/graphs/{graph_id}` is created to fetch the data of a specific graph from GraphDB by querying its named graph.
 3.  The Next.js frontend calls this API endpoint to retrieve the graph data for the selected project.
 4.  Nodes and links from the graph data are rendered correctly on the canvas.
 5.  The user can interact with the graph by panning and zooming.

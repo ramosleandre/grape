@@ -2,6 +2,6 @@
 API routes package.
 """
 
-from . import health
+from . import health, graphs
 
-__all__ = ["health"]
+__all__ = ["health", "graphs"]

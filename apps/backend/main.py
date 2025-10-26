@@ -32,7 +32,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from core.config import settings
-from api.routes import health
+from api.routes import health, graphs
 
 # Configure logging
 logging.basicConfig(
@@ -128,6 +128,7 @@ async def global_exception_handler(request, exc):
 
 # Register route handlers
 app.include_router(health.router, prefix="/api")
+app.include_router(graphs.router, prefix="/api")
 
 # MCP Tools
 from api import mcp
