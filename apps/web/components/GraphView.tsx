@@ -9,22 +9,14 @@ import { useGraphData } from '@/lib/hooks/useGraphData';
 const ForceGraph2D = dynamic(() => import('react-force-graph-2d'), { ssr: false });
 
 export default function GraphView() {
-  const { data, loading, error } = useGraphData(); // No initial graph ID - start with empty state
-
-  // Handler for Wikidata entity loading
-  const handleWikidataLoad = (entityData: { nodes: GraphNode[]; links: GraphLink[] }) => {
-    // WikidataInput handles its own data loading
-    // We keep this handler for compatibility but the data is managed by the hook
-    // In a future refactor, WikidataInput could be updated to use the hook's loadWikidataEntity
-    console.log('Wikidata data loaded:', entityData);
-  };
+  const { data, loading, error, loadWikidataEntity } = useGraphData(); // No initial graph ID - start with empty state
 
   return (
     <div className="flex h-full gap-4">
       {/* Main Panel - Graph Visualization Area */}
       <div className="flex-1 bg-white rounded-lg border border-[#E5E7EB] p-6">
         {/* Wikidata Input */}
-        <WikidataInput onEntityLoad={handleWikidataLoad} />
+        <WikidataInput onLoadEntity={loadWikidataEntity} />
 
         {loading && (
           <div className="flex flex-col items-center justify-center h-full">

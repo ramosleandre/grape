@@ -7,14 +7,12 @@
 'use client';
 
 import { useState } from 'react';
-import { fetchWikidataGraph, fetchWikidataGraphFromUrl } from '@/lib/api/graph';
-import type { GraphNode, GraphLink } from '@/lib/types';
 
 interface WikidataInputProps {
-  onEntityLoad: (data: { nodes: GraphNode[]; links: GraphLink[] }) => void;
+  onLoadEntity: (entityIdOrUrl: string) => Promise<void>;
 }
 
-export default function WikidataInput({ onEntityLoad }: WikidataInputProps) {
+export default function WikidataInput({ onLoadEntity }: WikidataInputProps) {
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -29,17 +27,17 @@ export default function WikidataInput({ onEntityLoad }: WikidataInputProps) {
       setLoading(true);
       setError(null);
 
-      // Determine if input is a URL or entity ID
-      const isUrl = input.startsWith('http://') || input.startsWith('https://');
+      // Extract entity ID from URL if needed
+      let entityId = input.trim();
+      if (entityId.includes('wikidata.org')) {
+        // Extract entity ID from URL (e.g., https://www.wikidata.org/wiki/Q90 -> Q90)
+        const match = entityId.match(/\/wiki\/(Q\d+)/);
+        if (match) {
+          entityId = match[1];
+        }
+      }
 
-      const data = isUrl
-        ? await fetchWikidataGraphFromUrl(input.trim())
-        : await fetchWikidataGraph(input.trim());
-
-      onEntityLoad({
-        nodes: data.nodes,
-        links: data.links,
-      });
+      await onLoadEntity(entityId);
     } catch (err) {
       console.error('Failed to load Wikidata entity:', err);
       setError(err instanceof Error ? err.message : 'Failed to load Wikidata entity');

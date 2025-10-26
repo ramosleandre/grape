@@ -13,7 +13,8 @@ services:
       - /app/.next
     environment:
       - NODE_ENV=development
-      - NEXT_PUBLIC_API_URL=http://api:8000
+      # Client-side API URL must use localhost for browser requests
+      - NEXT_PUBLIC_API_URL=http://localhost:8000
     command: npm run dev
     networks:
       - grape-network
