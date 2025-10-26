@@ -1,0 +1,3 @@
+[submodule "apps/backend/gen2kgbot"]
+	path = apps/backend/gen2kgbot
+	url = https://github.com/Wimmics/gen2kgbot.git

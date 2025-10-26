@@ -1,0 +1,93 @@
+[project]
+name = "grape-backend"
+version = "0.1.0"
+description = "Grape Backend - FastAPI server with MCP pipelines for Knowledge Graph querying"
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    # FastAPI stack
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.32.0",
+    "pydantic>=2.9.0",
+    "pydantic-settings>=2.6.0",
+
+    # LangChain ecosystem (matching gen2kgbot versions)
+    "langchain>=0.3.0,<0.4.0",
+    "langchain-chroma>=0.1.0",
+    "langchain-community>=0.3.0",
+    "langchain-core>=0.3.0,<0.4.0",
+    "langchain-google-genai>=2.0.0",
+    "langchain-huggingface>=0.1.0",
+    "langchain-openai>=0.2.0",
+    "langchain-qdrant>=0.2.0",
+    "langchain-text-splitters>=0.3.0",
+    "langchain-deepseek-official>=0.1.0",
+    "langchain-ollama>=0.3.0",
+
+    # LangGraph ecosystem
+    "langgraph>=0.3.0,<0.4.0",
+    "langgraph-checkpoint>=2.0.0",
+    "langgraph-sdk>=0.1.0",
+    "langgraph-api>=0.0.1",
+    "langgraph-cli>=0.1.0",
+    "langsmith>=0.2.0",
+
+    # Knowledge Graph & SPARQL
+    "rdflib>=7.0.0,<8.0.0",
+    "SPARQLWrapper>=2.0.0,<3.0.0",
+
+    # Vector stores
+    "chromadb>=0.5.0",
+    "faiss-cpu>=1.9.0",  # Use faiss-gpu if GPU available
+
+    # NLP models
+    "spacy>=3.0.0,<4.0.0",
+    "spacy-legacy>=3.0.0",
+    "spacy-loggers>=1.0.0",
+    "scispacy>=0.5.0",
+    "langcodes>=3.0.0,<4.0.0",
+
+    # HTTP & utilities
+    "requests>=2.0.0,<3.0.0",
+    "python-multipart>=0.0.9",  # For file uploads
+    "python-dotenv>=1.0.0",
+
+    # Google Cloud
+    "google-cloud-aiplatform>=1.70.0",
+    "google-cloud-storage>=2.18.0",
+    "google-cloud-secret-manager>=2.21.0",
+
+    # Development
+    "flake8>=7.0.0,<8.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.24.0",
+    "httpx>=0.27.0",  # For testing FastAPI
+    "black>=24.0.0",
+    "ruff>=0.7.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["core", "api", "models", "adapters", "pipelines", "scenarios"]
+
+[tool.uv]
+dev-dependencies = []
+
+[tool.black]
+line-length = 100
+target-version = ['py312']
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"

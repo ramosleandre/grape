@@ -1,0 +1,65 @@
+# Core FastAPI dependencies
+fastapi>=0.115.0
+uvicorn[standard]>=0.32.0
+pydantic>=2.9.0
+pydantic-settings>=2.6.0
+python-multipart>=0.0.9
+python-dotenv>=1.0.0
+
+# LangChain ecosystem (matching gen2kgbot)
+langchain>=0.3.0,<0.4.0
+langchain-chroma>=0.1.0
+langchain-community>=0.3.0
+langchain-core>=0.3.0,<0.4.0
+langchain-google-genai>=2.0.0
+langchain-huggingface>=0.1.0
+langchain-openai>=0.2.0
+langchain-qdrant>=0.2.0
+langchain-text-splitters>=0.3.0
+langchain-deepseek-official>=0.1.0
+langchain-ollama>=0.3.0
+
+# LangGraph ecosystem
+langgraph>=0.3.0,<0.4.0
+langgraph-checkpoint>=2.0.0
+langgraph-sdk>=0.1.0
+langgraph-api>=0.0.1
+langgraph-cli>=0.1.0
+langsmith>=0.2.0
+
+# Knowledge Graph & SPARQL
+rdflib>=7.0.0,<8.0.0
+SPARQLWrapper>=2.0.0,<3.0.0
+
+# Vector stores
+chromadb>=0.5.0
+faiss-cpu>=1.9.0
+
+# NLP - Spacy core
+spacy>=3.0.0,<4.0.0
+spacy-legacy>=3.0.0
+spacy-loggers>=1.0.0
+scispacy>=0.5.0
+langcodes>=3.0.0,<4.0.0
+
+# HTTP utilities
+requests>=2.0.0,<3.0.0
+
+# Google Cloud
+google-cloud-aiplatform>=1.70.0
+google-cloud-storage>=2.18.0
+google-cloud-secret-manager>=2.21.0
+
+# Development
+flake8>=7.0.0,<8.0.0
+
+# Spacy models (installed separately via pip after main install)
+# Run after pip install -r requirements.txt:
+# python -m spacy download en_core_web_sm
+# python -m spacy download en_core_web_lg
+# OR install directly:
+# pip install https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0.tar.gz
+# pip install https://github.com/explosion/spacy-models/releases/download/en_core_web_lg-3.8.0/en_core_web_lg-3.8.0.tar.gz
+# pip install https://s3-us-west-2.amazonaws.com/ai2-s2-scispacy/releases/v0.5.4/en_core_sci_lg-0.5.4.tar.gz
+# pip install https://s3-us-west-2.amazonaws.com/ai2-s2-scispacy/releases/v0.5.4/en_ner_bionlp13cg_md-0.5.4.tar.gz
+# pip install https://s3-us-west-2.amazonaws.com/ai2-s2-scispacy/releases/v0.5.4/en_ner_craft_md-0.5.4.tar.gz
