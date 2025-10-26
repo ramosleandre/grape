@@ -72,10 +72,15 @@ export function useGraphData(initialGraphId?: string): UseGraphDataReturn {
     setError(null);
   }, []);
 
-  // Auto-load initial data on mount
+  // Auto-load initial data on mount only if initialGraphId is provided
   useEffect(() => {
-    refetch();
-  }, [refetch]);
+    if (initialGraphId) {
+      refetch();
+    } else {
+      // No initial graph to load, set loading to false
+      setLoading(false);
+    }
+  }, [initialGraphId, refetch]);
 
   return {
     data,

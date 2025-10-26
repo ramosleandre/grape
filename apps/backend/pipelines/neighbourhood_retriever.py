@@ -16,6 +16,8 @@ class NeighbourhoodRetriever:
 
     def __init__(self, endpoint: Optional[str] = None):
         self.executor = SPARQLExecutor(endpoint)
+        self.endpoint = endpoint or settings.kg_sparql_endpoint_url
+        self.is_wikidata = "wikidata.org" in (self.endpoint or "")
 
     async def retrieve(
         self,
@@ -54,6 +56,10 @@ class NeighbourhoodRetriever:
         # Deduplicate nodes
         unique_nodes = {n["id"]: n for n in nodes}
 
+        # For Wikidata, fetch labels in a separate batch query
+        if self.is_wikidata and unique_nodes:
+            await self._fetch_wikidata_labels(unique_nodes, links)
+
         return {
             "center_node": concept_uri,
             "nodes": list(unique_nodes.values()),
@@ -61,21 +67,118 @@ class NeighbourhoodRetriever:
             "total_neighbors": len(unique_nodes),
         }
 
-    async def _get_outgoing(
-        self, concept_uri: str, limit: int
-    ) -> Dict[str, List[Dict]]:
-        """Get outgoing relationships."""
-        query = f"""
-        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    async def _fetch_wikidata_labels(self, nodes_dict: Dict[str, Dict], links: List[Dict]) -> None:
+        """Fetch labels for Wikidata entities and properties in batch."""
+        try:
+            # Get unique entity and property URIs
+            entity_ids = [uri.split("/")[-1] for uri in nodes_dict.keys()]
+            property_ids = list(set([link["relation"].split("/")[-1] for link in links]))
 
-        SELECT ?property ?target ?targetLabel ?propertyLabel WHERE {{
-            <{concept_uri}> ?property ?target .
-            FILTER(isURI(?target))
-            OPTIONAL {{ ?target rdfs:label ?targetLabel }}
-            OPTIONAL {{ ?property rdfs:label ?propertyLabel }}
-        }}
-        LIMIT {limit}
-        """
+            logger.info(f"Fetching labels for {len(entity_ids)} entities and {len(property_ids)} properties")
+
+            # Fetch entity labels
+            if entity_ids:
+                entity_labels = await self._fetch_labels(
+                    entity_ids[:50], "entity"
+                )  # Limit for performance
+                logger.info(f"Fetched {len(entity_labels)} entity labels")
+                for uri, node in nodes_dict.items():
+                    entity_id = uri.split("/")[-1]
+                    if entity_id in entity_labels:
+                        node["label"] = entity_labels[entity_id]
+                        logger.debug(f"Set label for {entity_id}: {entity_labels[entity_id]}")
+
+            # Fetch property labels
+            if property_ids:
+                prop_labels = await self._fetch_labels(property_ids[:20], "property")
+                logger.info(f"Fetched {len(prop_labels)} property labels")
+                for link in links:
+                    prop_id = link["relation"].split("/")[-1]
+                    if prop_id in prop_labels:
+                        link["label"] = prop_labels[prop_id]
+                        logger.debug(f"Set label for property {prop_id}: {prop_labels[prop_id]}")
+
+        except Exception as e:
+            logger.warning(f"Failed to fetch Wikidata labels: {e}")
+            # Continue without labels
+
+    async def _fetch_labels(self, ids: List[str], type: str = "entity") -> Dict[str, str]:
+        """Fetch labels for a list of Wikidata IDs using the Wikidata API."""
+        if not ids:
+            return {}
+
+        import aiohttp
+
+        labels = {}
+        
+        # Wikidata API allows up to 50 entities per request
+        batch_size = 50
+        for i in range(0, len(ids), batch_size):
+            batch_ids = ids[i:i+batch_size]
+            
+            # Use Wikidata API to get labels
+            url = "https://www.wikidata.org/w/api.php"
+            params = {
+                "action": "wbgetentities",
+                "ids": "|".join(batch_ids),
+                "props": "labels",
+                "languages": "en",
+                "format": "json"
+            }
+            
+            headers = {
+                "User-Agent": "GRAPE Knowledge Graph Tool/1.0 (https://github.com/grape)"
+            }
+            
+            try:
+                async with aiohttp.ClientSession() as session:
+                    async with session.get(url, params=params, headers=headers) as response:
+                        if response.status == 200:
+                            data = await response.json()
+                            entities = data.get("entities", {})
+                            for entity_id, entity_data in entities.items():
+                                if "labels" in entity_data and "en" in entity_data["labels"]:
+                                    labels[entity_id] = entity_data["labels"]["en"]["value"]
+                        else:
+                            logger.warning(f"Wikidata API returned status {response.status}")
+            except Exception as e:
+                logger.warning(f"Failed to fetch {type} labels for batch: {e}")
+                continue
+
+        return labels
+
+    async def _get_outgoing(self, concept_uri: str, limit: int) -> Dict[str, List[Dict]]:
+        """Get outgoing relationships."""
+
+        if self.is_wikidata:
+            # Wikidata-specific query using wdt: (truthy statements)
+            # Extract entity ID from URI (e.g., Q90 from http://www.wikidata.org/entity/Q90)
+            entity_id = concept_uri.split("/")[-1]
+
+            query = f"""
+            PREFIX wd: <http://www.wikidata.org/entity/>
+            PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+            
+            SELECT ?property ?target WHERE {{
+                wd:{entity_id} ?property ?target .
+                FILTER(STRSTARTS(STR(?property), "http://www.wikidata.org/prop/direct/"))
+                FILTER(STRSTARTS(STR(?target), "http://www.wikidata.org/entity/Q"))
+            }}
+            LIMIT {limit}
+            """
+        else:
+            # Generic SPARQL query for other endpoints
+            query = f"""
+            PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+            SELECT ?property ?target ?targetLabel ?propertyLabel WHERE {{
+                <{concept_uri}> ?property ?target .
+                FILTER(isURI(?target))
+                OPTIONAL {{ ?target rdfs:label ?targetLabel }}
+                OPTIONAL {{ ?property rdfs:label ?propertyLabel }}
+            }}
+            LIMIT {limit}
+            """
 
         try:
             results = await self.executor.execute(query)
@@ -83,7 +186,10 @@ class NeighbourhoodRetriever:
             links = []
 
             for r in results:
-                target_uri = r["target"]
+                target_uri = r.get("target", "")
+                if not target_uri:
+                    continue
+
                 nodes.append(
                     {
                         "id": target_uri,
@@ -95,8 +201,8 @@ class NeighbourhoodRetriever:
                     {
                         "source": concept_uri,
                         "target": target_uri,
-                        "relation": r["property"],
-                        "label": r.get("propertyLabel", r["property"].split("/")[-1]),
+                        "relation": r.get("property", ""),
+                        "label": r.get("propertyLabel", r.get("property", "").split("/")[-1]),
                     }
                 )
 
@@ -106,21 +212,37 @@ class NeighbourhoodRetriever:
             logger.error(f"Failed to get outgoing relationships: {e}")
             return {"nodes": [], "links": []}
 
-    async def _get_incoming(
-        self, concept_uri: str, limit: int
-    ) -> Dict[str, List[Dict]]:
+    async def _get_incoming(self, concept_uri: str, limit: int) -> Dict[str, List[Dict]]:
         """Get incoming relationships."""
-        query = f"""
-        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
-        SELECT ?property ?source ?sourceLabel ?propertyLabel WHERE {{
-            ?source ?property <{concept_uri}> .
-            FILTER(isURI(?source))
-            OPTIONAL {{ ?source rdfs:label ?sourceLabel }}
-            OPTIONAL {{ ?property rdfs:label ?propertyLabel }}
-        }}
-        LIMIT {limit}
-        """
+        if self.is_wikidata:
+            # Wikidata-specific query for incoming relationships
+            entity_id = concept_uri.split("/")[-1]
+
+            query = f"""
+            PREFIX wd: <http://www.wikidata.org/entity/>
+            PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+            
+            SELECT ?property ?source WHERE {{
+                ?source ?property wd:{entity_id} .
+                FILTER(STRSTARTS(STR(?property), "http://www.wikidata.org/prop/direct/"))
+                FILTER(STRSTARTS(STR(?source), "http://www.wikidata.org/entity/Q"))
+            }}
+            LIMIT {limit}
+            """
+        else:
+            # Generic SPARQL query for other endpoints
+            query = f"""
+            PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+            SELECT ?property ?source ?sourceLabel ?propertyLabel WHERE {{
+                ?source ?property <{concept_uri}> .
+                FILTER(isURI(?source))
+                OPTIONAL {{ ?source rdfs:label ?sourceLabel }}
+                OPTIONAL {{ ?property rdfs:label ?propertyLabel }}
+            }}
+            LIMIT {limit}
+            """
 
         try:
             results = await self.executor.execute(query)
@@ -128,7 +250,10 @@ class NeighbourhoodRetriever:
             links = []
 
             for r in results:
-                source_uri = r["source"]
+                source_uri = r.get("source", "")
+                if not source_uri:
+                    continue
+
                 nodes.append(
                     {
                         "id": source_uri,
@@ -140,8 +265,8 @@ class NeighbourhoodRetriever:
                     {
                         "source": source_uri,
                         "target": concept_uri,
-                        "relation": r["property"],
-                        "label": r.get("propertyLabel", r["property"].split("/")[-1]),
+                        "relation": r.get("property", ""),
+                        "label": r.get("propertyLabel", r.get("property", "").split("/")[-1]),
                     }
                 )
 

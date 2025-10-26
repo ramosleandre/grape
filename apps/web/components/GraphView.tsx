@@ -9,7 +9,7 @@ import { useGraphData } from '@/lib/hooks/useGraphData';
 const ForceGraph2D = dynamic(() => import('react-force-graph-2d'), { ssr: false });
 
 export default function GraphView() {
-  const { data, loading, error } = useGraphData('placeholder');
+  const { data, loading, error } = useGraphData(); // No initial graph ID - start with empty state
 
   // Handler for Wikidata entity loading
   const handleWikidataLoad = (entityData: { nodes: GraphNode[]; links: GraphLink[] }) => {
