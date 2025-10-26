@@ -2,9 +2,13 @@
 Semantic Concept Finder Pipeline
 Find concepts using gen2kgbot's embedding-based similarity search.
 
+This pipeline automatically embeds the user's question and compares it with
+pre-computed embeddings of KG concepts using LangChain's similarity_search.
+
 Uses:
-- gen2kgbot/app/utils/config_manager.py - get_classes_vector_db()
-- gen2kgbot/app/preprocessing/compute_embeddings.py - Vector stores
+- gen2kgbot/app/utils/config_manager.py - get_class_context_vector_db()
+- gen2kgbot embedding models (nomic-embed-text via Ollama)
+- LangChain VectorStore.similarity_search() - auto-embeds query and compares
 """
 
 from typing import List, Dict, Any, Optional
@@ -23,11 +27,21 @@ logger = logging.getLogger(__name__)
 
 
 class SemanticConceptFinder:
-    """Find matching concepts using gen2kgbot embeddings."""
+    """
+    Find matching concepts using gen2kgbot embeddings.
 
-    def __init__(self, endpoint: Optional[str] = None, kg_name: Optional[str] = None):
+    Automatically embeds user query and finds semantically similar KG concepts.
+    """
+
+    def __init__(
+        self,
+        endpoint: Optional[str] = None,
+        kg_name: Optional[str] = None,
+        scenario_id: str = "scenario_3"
+    ):
         self.executor = SPARQLExecutor(endpoint)
         self.kg_name = kg_name or settings.kg_short_name
+        self.scenario_id = scenario_id
         self.vector_db = None
 
     def _init_vector_db(self):
@@ -35,7 +49,8 @@ class SemanticConceptFinder:
         if self.vector_db is None:
             try:
                 import app.utils.config_manager as config
-                self.vector_db = config.get_classes_vector_db("scenario_3")
+                self.vector_db = config.get_class_context_vector_db(self.scenario_id)
+                logger.info(f"Loaded gen2kgbot vector DB for {self.scenario_id}")
             except Exception as e:
                 logger.warning(f"Could not load gen2kgbot vector DB: {e}")
                 self.vector_db = None
@@ -67,14 +82,21 @@ class SemanticConceptFinder:
         return concepts[:limit]
 
     async def _semantic_search(self, query: str, limit: int) -> List[Dict[str, Any]]:
-        """Use gen2kgbot vector DB for semantic search."""
+        """
+        Use gen2kgbot vector DB for semantic search.
+
+        LangChain automatically:
+        1. Embeds the query using the configured embedding model (nomic-embed-text)
+        2. Compares with pre-computed KG concept embeddings
+        3. Returns top-k most similar concepts
+        """
         self._init_vector_db()
 
         if not self.vector_db:
             return []
 
         try:
-            # Use LangChain vector store similarity search
+            # LangChain automatically embeds 'query' and finds similar concepts
             docs = self.vector_db.similarity_search(query, k=limit)
 
             concepts = []

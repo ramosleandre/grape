@@ -129,9 +129,9 @@ async def global_exception_handler(request, exc):
 # Register route handlers
 app.include_router(health.router, prefix="/api")
 
-# TODO: Add more routers
-# app.include_router(graph.router, prefix="/api")
-# app.include_router(query.router, prefix="/api")
+# MCP Tools
+from api import mcp
+app.include_router(mcp.router, prefix="/api")
 
 
 @app.get("/")

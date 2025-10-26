@@ -22,16 +22,22 @@ This directory contains 9 reusable pipelines that leverage **gen2kgbot** functio
 ### 2. **Semantic Concept Finder** (`semantic_concept_finder.py`)
 
 **Uses:**
-- `gen2kgbot/app/utils/config_manager.py::get_classes_vector_db()`
-  - Accesses pre-computed class embeddings
-  - Uses FAISS or Chroma vector stores
-- `gen2kgbot/app/preprocessing/compute_embeddings.py`
-  - Embedding infrastructure
+- `gen2kgbot/app/utils/config_manager.py::get_class_context_vector_db(scenario_id)`
+  - Loads pre-computed class embeddings (FAISS or Chroma vector store)
+  - Accesses embedding model (nomic-embed-text via Ollama)
+- `LangChain VectorStore.similarity_search(query, k=limit)`
+  - **Automatically embeds the user's query** using the configured embedding model
+  - Compares query embedding with pre-computed KG concept embeddings
+  - Returns top-k most similar concepts
 
 **What it does:**
-- Semantic similarity search using gen2kgbot embeddings
-- Falls back to keyword search if embeddings unavailable
-- Finds concepts matching natural language queries
+1. **Takes user question** (natural language)
+2. **Embeds it automatically** via LangChain (nomic-embed-text model)
+3. **Compares with KG embeddings** (pre-computed by gen2kgbot)
+4. **Returns matching concepts** ranked by similarity
+5. **Falls back to keyword search** if embeddings unavailable
+
+**Important:** The user question is embedded in real-time by LangChain's `similarity_search()` - no manual embedding needed!
 
 ---
 
