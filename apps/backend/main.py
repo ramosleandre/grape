@@ -133,6 +133,14 @@ app.include_router(health.router, prefix="/api")
 from api import mcp
 app.include_router(mcp.router, prefix="/api")
 
+# Graph routes
+from api.routes import graph
+app.include_router(graph.router, prefix="/api")
+
+# Wikidata routes
+from api.routes import wikidata
+app.include_router(wikidata.router, prefix="/api")
+
 
 @app.get("/")
 async def root():

@@ -1,17 +1,17 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 :root {
   /* Grape Design System Colors */
-  --primary: #E57373;
-  --background: #FDFDFD;
-  --panel-background: #FFFFFF;
-  --text-primary: #1C1C1C;
-  --text-secondary: #6B7280;
-  --border: #E5E7EB;
-  --success: #10B981;
-  --warning: #F59E0B;
-  --error: #EF4444;
-  
+  --primary: #e57373;
+  --background: #fdfdfd;
+  --panel-background: #ffffff;
+  --text-primary: #1c1c1c;
+  --text-secondary: #6b7280;
+  --border: #e5e7eb;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --error: #ef4444;
+
   /* Legacy variables for compatibility */
   --foreground: var(--text-primary);
 }
@@ -34,7 +34,12 @@
 body {
   background: var(--background);
   color: var(--text-primary);
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family:
+    'Inter',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    sans-serif;
 }
 
 /* 8-point grid system */

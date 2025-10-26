@@ -11,12 +11,8 @@ export default function QueryView() {
       <div className="flex-1 bg-white rounded-lg border border-[#E5E7EB] flex flex-col">
         {/* Chat Header */}
         <div className="px-6 py-4 border-b border-[#E5E7EB]">
-          <h3 className="text-lg font-semibold text-[#1C1C1C]">
-            Gentoo KGBot
-          </h3>
-          <p className="text-sm text-[#6B7280] mt-1">
-            Ask questions about your knowledge graph
-          </p>
+          <h3 className="text-lg font-semibold text-[#1C1C1C]">Gentoo KGBot</h3>
+          <p className="text-sm text-[#6B7280] mt-1">Ask questions about your knowledge graph</p>
         </div>
 
         {/* Chat Messages Area */}
@@ -37,12 +33,10 @@ export default function QueryView() {
                 />
               </svg>
             </div>
-            <h4 className="text-lg font-semibold text-[#1C1C1C] mb-2">
-              Start a Conversation
-            </h4>
+            <h4 className="text-lg font-semibold text-[#1C1C1C] mb-2">Start a Conversation</h4>
             <p className="text-[#6B7280] max-w-md">
-              Ask Gentoo KGBot anything about your knowledge graph. 
-              All answers are sourced directly from your data.
+              Ask Gentoo KGBot anything about your knowledge graph. All answers are sourced directly
+              from your data.
             </p>
             <div className="mt-6 space-y-2 text-sm text-[#6B7280]">
               <p>• Responses are 100% traceable to graph nodes</p>
@@ -76,9 +70,7 @@ export default function QueryView() {
       {/* Reasoning Panel */}
       <div className="w-96 bg-white rounded-lg border border-[#E5E7EB] p-6">
         <div className="flex flex-col h-full">
-          <h3 className="text-lg font-semibold text-[#1C1C1C] mb-4">
-            Reasoning Path
-          </h3>
+          <h3 className="text-lg font-semibold text-[#1C1C1C] mb-4">Reasoning Path</h3>
           <div className="flex-1 flex items-center justify-center">
             <div className="text-center text-[#6B7280]">
               <div className="mb-4">
@@ -98,8 +90,8 @@ export default function QueryView() {
               </div>
               <p className="mb-2 font-medium">Visual Reasoning Path</p>
               <p className="text-sm">
-                When the agent responds, this panel will show the 
-                logical path it took through your knowledge graph
+                When the agent responds, this panel will show the logical path it took through your
+                knowledge graph
               </p>
             </div>
           </div>

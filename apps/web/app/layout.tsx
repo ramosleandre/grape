@@ -1,21 +1,21 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import { Roboto_Mono } from "next/font/google";
-import "./globals.css";
+import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
+import { Roboto_Mono } from 'next/font/google';
+import './globals.css';
 
 const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
+  variable: '--font-inter',
+  subsets: ['latin'],
 });
 
 const robotoMono = Roboto_Mono({
-  variable: "--font-roboto-mono",
-  subsets: ["latin"],
+  variable: '--font-roboto-mono',
+  subsets: ['latin'],
 });
 
 export const metadata: Metadata = {
-  title: "Grape - Knowledge Graph Explorer",
-  description: "AI-powered knowledge graph visualization and querying platform",
+  title: 'Grape - Knowledge Graph Explorer',
+  description: 'AI-powered knowledge graph visualization and querying platform',
 };
 
 export default function RootLayout({
@@ -25,11 +25,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${inter.variable} ${robotoMono.variable} antialiased`}
-      >
-        {children}
-      </body>
+      <body className={`${inter.variable} ${robotoMono.variable} antialiased`}>{children}</body>
     </html>
   );
 }

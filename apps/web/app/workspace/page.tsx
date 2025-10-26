@@ -23,9 +23,7 @@ export default function WorkspacePage() {
             <button
               onClick={() => setActiveTab('graph')}
               className={`px-6 py-4 text-sm font-medium transition-colors relative ${
-                activeTab === 'graph'
-                  ? 'text-[#E57373]'
-                  : 'text-[#6B7280] hover:text-[#1C1C1C]'
+                activeTab === 'graph' ? 'text-[#E57373]' : 'text-[#6B7280] hover:text-[#1C1C1C]'
               }`}
             >
               Graph View
@@ -36,9 +34,7 @@ export default function WorkspacePage() {
             <button
               onClick={() => setActiveTab('query')}
               className={`px-6 py-4 text-sm font-medium transition-colors relative ${
-                activeTab === 'query'
-                  ? 'text-[#E57373]'
-                  : 'text-[#6B7280] hover:text-[#1C1C1C]'
+                activeTab === 'query' ? 'text-[#E57373]' : 'text-[#6B7280] hover:text-[#1C1C1C]'
               }`}
             >
               Query View

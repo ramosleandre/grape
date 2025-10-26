@@ -1,5 +1,5 @@
-import Image from "next/image";
-import Link from "next/link";
+import Image from 'next/image';
+import Link from 'next/link';
 
 export default function Home() {
   return (
@@ -7,17 +7,9 @@ export default function Home() {
       <main className="flex w-full max-w-4xl flex-col items-center gap-12 text-center">
         {/* Logo */}
         <div className="flex flex-col items-center gap-6">
-          <Image
-            src="/grape_logo.png"
-            alt="Grape Logo"
-            width={120}
-            height={120}
-            priority
-          />
+          <Image src="/grape_logo.png" alt="Grape Logo" width={120} height={120} priority />
           <div>
-            <h1 className="text-5xl font-bold text-[#1C1C1C] mb-4">
-              Welcome to Grape
-            </h1>
+            <h1 className="text-5xl font-bold text-[#1C1C1C] mb-4">Welcome to Grape</h1>
             <p className="text-xl text-[#6B7280] max-w-2xl">
               AI-powered knowledge graph visualization and querying platform
             </p>
@@ -42,9 +34,7 @@ export default function Home() {
                 />
               </svg>
             </div>
-            <h3 className="text-lg font-semibold text-[#1C1C1C] mb-2">
-              Interactive Visualization
-            </h3>
+            <h3 className="text-lg font-semibold text-[#1C1C1C] mb-2">Interactive Visualization</h3>
             <p className="text-sm text-[#6B7280]">
               Explore your knowledge graphs with intuitive pan, zoom, and click interactions
             </p>
@@ -66,9 +56,7 @@ export default function Home() {
                 />
               </svg>
             </div>
-            <h3 className="text-lg font-semibold text-[#1C1C1C] mb-2">
-              AI-Powered Querying
-            </h3>
+            <h3 className="text-lg font-semibold text-[#1C1C1C] mb-2">AI-Powered Querying</h3>
             <p className="text-sm text-[#6B7280]">
               Ask natural language questions and get verifiable answers from your data
             </p>
@@ -90,9 +78,7 @@ export default function Home() {
                 />
               </svg>
             </div>
-            <h3 className="text-lg font-semibold text-[#1C1C1C] mb-2">
-              Transparent Reasoning
-            </h3>
+            <h3 className="text-lg font-semibold text-[#1C1C1C] mb-2">Transparent Reasoning</h3>
             <p className="text-sm text-[#6B7280]">
               See the complete reasoning path the AI took to answer your questions
             </p>
@@ -106,12 +92,7 @@ export default function Home() {
             className="inline-flex items-center gap-2 px-8 py-4 bg-[#E57373] text-white text-lg font-semibold rounded-lg hover:bg-[#D55555] transition-colors"
           >
             Open Workspace
-            <svg
-              className="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
