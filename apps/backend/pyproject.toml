@@ -57,6 +57,9 @@ dependencies = [
     "google-cloud-storage>=2.18.0",
     "google-cloud-secret-manager>=2.21.0",
 
+    # MCP
+    "fastmcp>=0.5.0",
+
     # Development
     "flake8>=7.0.0,<8.0.0",
 ]
@@ -75,7 +78,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
-packages = ["core", "api", "models", "adapters", "pipelines", "scenarios"]
+packages = ["core", "api", "models", "pipelines", "scenarios"]
 
 [tool.uv]
 dev-dependencies = [
